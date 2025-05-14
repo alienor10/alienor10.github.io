@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>John Pork vous appelle</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: #eee;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 1em;
+    }
+    .button {
+      background-color: #333;
+      color: #eee;
+      padding: 1em 2em;
+      margin: 1em;
+      border: 2px solid #eee;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .button:hover {
+      background-color: #555;
+    }
+    .top-right-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #222;
+      color: #eee;
+      padding: 0.5em 1em;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <a href="histoire.html" class="top-right-button">Histoire de John Pork</a>
+  <h1> John Pork vous appelle...</h1>
+  <button class="button" onclick="location.href='conflit.html'">Répondre</button>
+  <button class="button" onclick="location.href='tim.html'">Ignorer</button>
+</body>
+</html>
