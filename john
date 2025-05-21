@@ -1,56 +1,130 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>John Pork vous appelle</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #111;
-      color: #eee;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      text-align: center;
+<script>
+  const canvas = document.getElementById("pong");
+  const context = canvas.getContext("2d");
+
+  const paddleWidth = 10;
+  const paddleHeight = 100;
+
+  let leftPaddleY = canvas.height / 2 - paddleHeight / 2;
+  let rightPaddleY = canvas.height / 2 - paddleHeight / 2;
+
+  let player1Score = 0;
+  let player2Score = 0;
+
+  const paddleSpeed = 5;
+
+  const ball = {
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+    speedX: 4,
+    speedY: 4
+  };
+
+  const pig = document.getElementById("pig");
+
+  let keys = {
+    ArrowUp: false,
+    ArrowDown: false
+  };
+
+  function updateScore() {
+    document.getElementById("score").textContent =
+      `Joueur 1: ${player1Score} | Joueur 2: ${player2Score}`;
+  }
+
+  function drawPaddles() {
+    context.fillStyle = "#fff";
+    context.fillRect(0, leftPaddleY, paddleWidth, paddleHeight);
+    context.fillRect(canvas.width - paddleWidth, rightPaddleY, paddleWidth, paddleHeight);
+  }
+
+  function moveBall() {
+    ball.x += ball.speedX;
+    ball.y += ball.speedY;
+
+    if (ball.y <= 0 || ball.y >= canvas.height) {
+      ball.speedY *= -1;
     }
-    h1 {
-      font-size: 2.5em;
-      margin-bottom: 1em;
+
+    // Collision Joueur 1
+    if (
+      ball.x <= paddleWidth &&
+      ball.y >= leftPaddleY &&
+      ball.y <= leftPaddleY + paddleHeight
+    ) {
+      ball.speedX *= -1;
+      ball.x = paddleWidth + 1;
     }
-    .button {
-      background-color: #333;
-      color: #eee;
-      padding: 1em 2em;
-      margin: 1em;
-      border: 2px solid #eee;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background-color 0.3s;
+
+    // Collision Joueur 2
+    if (
+      ball.x >= canvas.width - paddleWidth &&
+      ball.y >= rightPaddleY &&
+      ball.y <= rightPaddleY + paddleHeight
+    ) {
+      ball.speedX *= -1;
+      ball.x = canvas.width - paddleWidth - 1;
     }
-    .button:hover {
-      background-color: #555;
+
+    if (ball.x < 0) {
+      player2Score++;
+      resetBall();
+    } else if (ball.x > canvas.width) {
+      player1Score++;
+      resetBall();
     }
-    .top-right-button {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background-color: #222;
-      color: #eee;
-      padding: 0.5em 1em;
-      border: 1px solid #eee;
-      border-radius: 8px;
-      text-decoration: none;
+
+    pig.style.left = canvas.offsetLeft + ball.x - 12 + "px";
+    pig.style.top = canvas.offsetTop + ball.y - 12 + "px";
+  }
+
+  function resetBall() {
+    updateScore();
+    ball.x = canvas.width / 2;
+    ball.y = canvas.height / 2;
+    ball.speedX *= -1;
+  }
+
+  function draw() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    drawPaddles();
+    moveBall();
+    moveRightPaddle();
+    requestAnimationFrame(draw);
+  }
+
+  // Joueur 1 avec souris
+  canvas.addEventListener("mousemove", (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const mouseY = e.clientY - rect.top;
+    leftPaddleY = mouseY - paddleHeight / 2;
+    leftPaddleY = Math.max(0, Math.min(canvas.height - paddleHeight, leftPaddleY));
+  });
+
+  // Joueur 2 avec flèches ↑ ↓
+  function moveRightPaddle() {
+    if (keys.ArrowUp) {
+      rightPaddleY -= paddleSpeed;
     }
-  </style>
-</head>
-<body>
-  <a href="histoire.html" class="top-right-button">Histoire de John Pork</a>
-  <h1> John Pork vous appelle...</h1>
-  <button class="button" onclick="location.href='conflit.html'">Répondre</button>
-  <button class="button" onclick="location.href='tim.html'">Ignorer</button>
-</body>
-</html>
+    if (keys.ArrowDown) {
+      rightPaddleY += paddleSpeed;
+    }
+    rightPaddleY = Math.max(0, Math.min(canvas.height - paddleHeight, rightPaddleY));
+  }
+
+  // Gestion des touches
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+      keys[e.key] = true;
+    }
+  });
+
+  document.addEventListener("keyup", (e) => {
+    if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+      keys[e.key] = false;
+    }
+  });
+
+  updateScore();
+  draw();
+</script>
